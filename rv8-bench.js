@@ -20,6 +20,7 @@ var targets    = [ 'rv-hist-riscv32',
                    'qemu-riscv64',
                    'qemu-arm',
                    'qemu-aarch64',
+                   'native-riscv64',
                    'native-i386',
                    'native-x86_64',
                    'size-riscv32',
@@ -286,9 +287,15 @@ function benchmark_qemu(benchmark, target, opt, runs)
 function benchmark_native(benchmark, target, opt, runs)
 {
   var system = 'native-' + target;
+  var perf_events;
+  if (target === 'riscv64') {
+    perf_events = 'cycles,instructions';
+  } else {
+    perf_events = 'cycles,instructions,r1b1,r10e,r2c2,r1c2';
+  }
   for (var i = 0; i < runs; i++) {
     var data = benchmark_cmd(benchmark, 'perf',
-       ['stat', '-e', 'cycles,instructions,r1b1,r10e,r2c2,r1c2',
+       ['stat', '-e', perf_events,
         'bin/' + target + '/' + benchmark + "." + opt]);
     benchmark_add_row(benchmark, system, opt, data);
     benchmark_print_row(fmt_inst, data);
@@ -314,6 +321,7 @@ function benchmark_run(benchmark, target, opt, runs)
     case 'qemu-riscv64': benchmark_qemu(benchmark, 'riscv64', opt, runs); break;
     case 'qemu-arm': benchmark_qemu(benchmark, 'arm', opt, runs); break;
     case 'qemu-aarch64': benchmark_qemu(benchmark, 'aarch64', opt, runs); break;
+    case 'native-riscv64': benchmark_native(benchmark, 'riscv64', opt, runs); break;
     case 'native-i386': benchmark_native(benchmark, 'i386', opt, runs); break;
     case 'native-x86_64': benchmark_native(benchmark, 'x86_64', opt, runs); break;
     case 'size-riscv32': benchmark_size(benchmark, 'riscv32', opt, runs); break;
