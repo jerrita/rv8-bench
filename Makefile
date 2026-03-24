@@ -6,7 +6,7 @@ CFLAGS = -fPIE -g
 LDFLAGS = -static
 
 RV32 = riscv32-linux-musl-
-RV64 = riscv64-linux-musl-
+RV64 = 
 I386 = i386-linux-musl-
 X86_64 = x86_64-linux-musl-
 ARM32 = arm-linux-musleabihf-
